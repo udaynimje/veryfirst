@@ -116,25 +116,25 @@ func (t *UserChaincode)  RegisterPolicy(stub shim.ChaincodeStubInterface, args [
 
 func (t *UserChaincode) Query(stub shim.ChaincodeStubInterface,function string, args []string) ([]byte, error) {
 	
-	var PolicyId string // Entities
+	//var PolicyId string // Entities
 	var err error
-	var resAsBytes []byte
+	//var resAsBytes []byte
 
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting name of the person to query")
 	}
 
-	PolicyId = args[0]
-	
-	resAsBytes, err = t.GetPolicyDetails(stub, PolicyId)
+	//PolicyId = args[0]
+	PolicyTxsAsBytes, err := stub.GetState(userIndexTxStr)
+	//resAsBytes, err = t.GetPolicyDetails(stub, PolicyId)
 	//readAsBytes,_:=json.Marshal(args)
-	fmt.Printf("Query Response:%s\n", resAsBytes)
+	//fmt.Printf("Query Response:%s\n", PolicyTxsAsBytes)
 	
 	if err != nil {
 		return nil, err
 	}
 	
-	return resAsBytes, nil
+	return PolicyTxsAsBytes, nil
 }
 
 func (t *UserChaincode)  GetPolicyDetails(stub shim.ChaincodeStubInterface, User_ID string) ([]byte, error) {
