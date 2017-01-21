@@ -109,7 +109,7 @@ func (t *UserChaincode)  RegisterPolicy(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+    return jsonAsBytes, nil
 }
 
 // Query callback representing the query of a chaincode
