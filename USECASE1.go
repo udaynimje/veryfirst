@@ -109,7 +109,7 @@ func (t *UserChaincode)  RegisterPolicy(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, err
 	}
-    return jsonAsBytes, nil
+    return nil, nil
 }
 
 // Query callback representing the query of a chaincode
@@ -181,6 +181,7 @@ func (t *UserChaincode)  GetPolicyDetails(stub shim.ChaincodeStubInterface, User
 		if err != nil {
 		return nil, errors.New("Failed to Marshal the required Obj")
 		}
+        res=PolicyTxsAsBytes
 		return res, nil
 	}
 }
