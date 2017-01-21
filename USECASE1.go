@@ -57,14 +57,14 @@ func (t *UserChaincode) Init(stub shim.ChaincodeStubInterface, function string, 
 // Add user data
 func (t *UserChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 
-	return t.RegisterPolicy(stub, args)
-	/*if function == userRegister {		
+	//return t.RegisterPolicy(stub, args)
+	if function == userRegister {		
 		return t.RegisterPolicy(stub, args)
 	}  else if  function == userTransfer {		
 		return t.TransferPoints(stub, args)
-	} */
+	} 
    
-	//return nil, nil
+	return nil, nil
 }
 
 func (t *UserChaincode)  TransferPoints(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
