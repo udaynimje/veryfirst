@@ -127,8 +127,8 @@ func (t *UserChaincode) Query(stub shim.ChaincodeStubInterface,function string, 
 
 	PolicyId = args[0]
 	
-	resAsBytes, err = t.GetPolicyDetails(stub, PolicyId)
-	
+	//resAsBytes, err = t.GetPolicyDetails(stub, PolicyId)
+	readAsBytes,_=json.Marshal(args)
 	fmt.Printf("Query Response:%s\n", resAsBytes)
 	
 	if err != nil {
