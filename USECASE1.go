@@ -51,7 +51,7 @@ func (t *UserChaincode) Init(stub shim.ChaincodeStubInterface, function string, 
 	}
 	
 	
-	return nil, nil
+	return jsonAsBytes, nil
 }
 
 // Add user data
