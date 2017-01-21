@@ -9,145 +9,149 @@ import (
 	"fmt"
 	//"strconv"
 	"encoding/json"
+    //"github.com/hyperledger/fabric/chaincode/"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	//"github.com/golang/protobuf/ptypes/timestamp"
 )
 
-// Region Chaincode implementation
-type RegionChaincode struct {
+// User Chaincode implementation
+type UserChaincode struct {
 }
+var userIndexTxStr="_userInitState"
+var userTxnDetails = "_USERTXN"
+var userRegister = "_USERREG"
+var userTransfer = "_USERTRANSFER"
+var getTxnDetails="_USERTXNDETAILS"
 
-var regionIndexTxStr = "_regionIndexTxStr"
-
-type RegionData struct{
-	REGION_NAME string `json:"REGION_NAME"`
-	INSURED_ID string `json:"INSURED_ID"`
-	INSURED string `json:"INSURED"`
-	BUSINESS_AREA string `json:"BUSINESS_AREA"`
-	LINE_OF_BUSINESS_ID string `json:"LINE_OF_BUSINESS_ID"`
-	LINE_OF_BUSINESS string `json:"LINE_OF_BUSINESS"`
-	POLICY string `json:"POLICY"`
-	DEAL_ID string `json:"DEAL_ID"`
-	DEAL_NUM string `json:"DEAL_NUM"`
-	BROKER_ID string `json:"BROKER_ID"`
-	BROKER string `json:"BROKER"`
-	INCEPTION_DATE string `json:"INCEPTION_DATE"`
-	EXPIRATION_DATE string `json:"EXPIRATION_DATE"`
-	CARRIER_CD string `json:"CARRIER_CD"`
-	CARRIER string `json:"CARRIER"`
+type UserData struct{
+	User_NAME string `json:"USER_NAME"`
+	User_ID string `json:"USER_ID"`
+	Password string `json:"PASSWORD"`
+	MID string `json:"MID"`
+	CONTACT_NO string `json:"CONTACT_NO"`
+	TRANS_AMT string `json:"TRANS_AMOUNT"`
+	TRANS_POINT string `json:"TRANS_POINT"`
+	REG_DATE string `json:"REGISTRATION_DATE"`
+	TRANS_DATE string `json:"TRANSACTION_DATE"`
 }
 
 
-func (t *RegionChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+func (t *UserChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	
 	var err error
 	// Initialize the chaincode
 	
-	fmt.Printf("Deployment of Loyalty is completed\n")
+	fmt.Printf("Loyalty Rewards is implemented\n")
 	
-	var emptyPolicyTxs []RegionData
-	jsonAsBytes, _ := json.Marshal(emptyPolicyTxs)
-	err = stub.PutState(regionIndexTxStr, jsonAsBytes)
+	var user []UserData
+	jsonAsBytes, _ := json.Marshal(user)
+	err = stub.PutState(userRegister, jsonAsBytes)
 	if err != nil {
 		return nil, err
 	}
 	
 	
-	return nil, nil
+	return jsonAsBytes, nil
 }
 
-// Add region data for the policy
-func (t *RegionChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if function == regionIndexTxStr {		
+// Add user data
+func (t *UserChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+
+	return t.RegisterPolicy(stub, args)
+	/*if function == userRegister {		
 		return t.RegisterPolicy(stub, args)
-	}
-	return nil, nil
+	}  else if  function == userTransfer {		
+		return t.TransferPoints(stub, args)
+	} */
+   
+	//return nil, nil
 }
- 
-func (t *RegionChaincode)  RegisterPolicy(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+
+func (t *UserChaincode)  TransferPoints(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    fmt.Printf("INSIDE TransferPoints")
+return nil,nil
+}
+
+func (t *UserChaincode)  RegisterPolicy(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	
-	var RegionDataObj RegionData
-	var RegionDataList []RegionData
+	var UserDataObj UserData
+	var UserDataList []UserData
 	var err error
 
-	if len(args) != 15 {
-		return nil, errors.New("Incorrect number of arguments. Need 14 arguments")
+	if len(args) != 9 {
+		return nil, errors.New("Incorrect number of arguments. Need 8 arguments")
 	}
 
 	// Initialize the chaincode
-	RegionDataObj.REGION_NAME = args[0]
-	RegionDataObj.INSURED_ID = args[1]
-	RegionDataObj.INSURED = args[2]
-	RegionDataObj.BUSINESS_AREA = args[3]
-	RegionDataObj.LINE_OF_BUSINESS_ID = args[4]
-	RegionDataObj.LINE_OF_BUSINESS = args[5]
-	RegionDataObj.POLICY = args[6]
-	RegionDataObj.DEAL_ID = args[7]
-	RegionDataObj.DEAL_NUM = args[8]
-	RegionDataObj.BROKER_ID = args[9]
-	RegionDataObj.BROKER = args[10]
-	RegionDataObj.INCEPTION_DATE = args[11]
-	RegionDataObj.EXPIRATION_DATE = args[12]
-	RegionDataObj.CARRIER_CD = args[13]
-	RegionDataObj.CARRIER = args[14]
+	UserDataObj.User_NAME = args[0]
+	UserDataObj.User_ID = args[1]
+	UserDataObj.Password = args[2]
+	UserDataObj.MID = args[3]
+	UserDataObj.CONTACT_NO = args[4]
+	UserDataObj.TRANS_AMT = args[5]
+	UserDataObj.TRANS_POINT = args[6]
+	UserDataObj.REG_DATE = args[7]
+	UserDataObj.TRANS_DATE = args[8]
 	
-	fmt.Printf("Input from user:%s\n", RegionDataObj)
 	
-	regionTxsAsBytes, err := stub.GetState(regionIndexTxStr)
+	fmt.Printf("Input from user:%s\n", UserDataObj)
+	
+	userTxsAsBytes, err := stub.GetState(userIndexTxStr)
 	if err != nil {
-		return nil, errors.New("Failed to get consumer Transactions")
+		return nil, errors.New("Failed to get user Details")
 	}
-	json.Unmarshal(regionTxsAsBytes, &RegionDataList)
+	json.Unmarshal(userTxsAsBytes, &UserDataList)
 	
-	RegionDataList = append(RegionDataList, RegionDataObj)
-	jsonAsBytes, _ := json.Marshal(RegionDataList)
+	UserDataList = append(UserDataList, UserDataObj)
+	jsonAsBytes, _ := json.Marshal(UserDataList)
 	
-	err = stub.PutState(regionIndexTxStr, jsonAsBytes)
+	err = stub.PutState(userIndexTxStr, jsonAsBytes)
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+    return nil, nil
 }
 
 // Query callback representing the query of a chaincode
-func (t *RegionChaincode) Query(stub shim.ChaincodeStubInterface,function string, args []string) ([]byte, error) {
+
+func (t *UserChaincode) Query(stub shim.ChaincodeStubInterface,function string, args []string) ([]byte, error) {
 	
-	var PolicyId string // Entities
+	//var PolicyId string // Entities
 	var err error
-	var resAsBytes []byte
+	//var resAsBytes []byte
 
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting name of the person to query")
 	}
 
-	PolicyId = args[0]
-	
-	resAsBytes, err = t.GetPolicyDetails(stub, PolicyId)
-	
-	fmt.Printf("Query Response:%s\n", resAsBytes)
+	//PolicyId = args[0]
+	PolicyTxsAsBytes, err := stub.GetState(userIndexTxStr)
+	//resAsBytes, err = t.GetPolicyDetails(stub, PolicyId)
+	//readAsBytes,_:=json.Marshal(args)
+	//fmt.Printf("Query Response:%s\n", PolicyTxsAsBytes)
 	
 	if err != nil {
 		return nil, err
 	}
 	
-	return resAsBytes, nil
+	return PolicyTxsAsBytes, nil
 }
 
-func (t *RegionChaincode)  GetPolicyDetails(stub shim.ChaincodeStubInterface, PolicyId string) ([]byte, error) {
+func (t *UserChaincode)  GetPolicyDetails(stub shim.ChaincodeStubInterface, User_ID string) ([]byte, error) {
 	
-	//var requiredObj RegionData
+	//var requiredObj UserData
 	var objFound bool
-	PolicyTxsAsBytes, err := stub.GetState(regionIndexTxStr)
+	PolicyTxsAsBytes, err := stub.GetState(userIndexTxStr)
 	if err != nil {
 		return nil, errors.New("Failed to get Merchant Transactions")
 	}
-	var PolicyTxObjects []RegionData
-	var PolicyTxObjects1 []RegionData
+	var PolicyTxObjects []UserData
+	var PolicyTxObjects1 []UserData
 	json.Unmarshal(PolicyTxsAsBytes, &PolicyTxObjects)
 	length := len(PolicyTxObjects)
 	fmt.Printf("Output from chaincode: %s\n", PolicyTxsAsBytes)
 	
-	if PolicyId == "" {
+	if User_ID == "" {
 		res, err := json.Marshal(PolicyTxObjects)
 		if err != nil {
 		return nil, errors.New("Failed to Marshal the required Obj")
@@ -159,7 +163,7 @@ func (t *RegionChaincode)  GetPolicyDetails(stub shim.ChaincodeStubInterface, Po
 	// iterate
 	for i := 0; i < length; i++ {
 		obj := PolicyTxObjects[i]
-		if PolicyId == obj.POLICY {
+		if User_ID == obj.User_ID {
 			PolicyTxObjects1 = append(PolicyTxObjects1,obj)
 			//requiredObj = obj
 			objFound = true
@@ -177,12 +181,13 @@ func (t *RegionChaincode)  GetPolicyDetails(stub shim.ChaincodeStubInterface, Po
 		if err != nil {
 		return nil, errors.New("Failed to Marshal the required Obj")
 		}
+        res=PolicyTxsAsBytes
 		return res, nil
 	}
 }
 
 func main() {
-	err := shim.Start(new(RegionChaincode))
+	err := shim.Start(new(UserChaincode))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
