@@ -57,14 +57,14 @@ func (t *UserChaincode) Init(stub shim.ChaincodeStubInterface, function string, 
 // Add user data
 func (t *UserChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 
-	//return t.RegisterPolicy(stub, args)
-	if function == userRegister {		
+	return t.RegisterPolicy(stub, args)
+	/*if function == userRegister {		
 		return t.RegisterPolicy(stub, args)
 	}  else if  function == userTransfer {		
 		return t.TransferPoints(stub, args)
-	} 
+	} */
    
-	return nil, nil
+	//return nil, nil
 }
 
 func (t *UserChaincode)  TransferPoints(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
@@ -116,25 +116,25 @@ func (t *UserChaincode)  RegisterPolicy(stub shim.ChaincodeStubInterface, args [
 
 func (t *UserChaincode) Query(stub shim.ChaincodeStubInterface,function string, args []string) ([]byte, error) {
 	
-	var PolicyId string // Entities
-	
-	PolicyId=args[0]
+	//var PolicyId string // Entities
+	var err error
+	//var resAsBytes []byte
 
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting name of the person to query")
 	}
 
 	//PolicyId = args[0]
-	
-	resAsBytes, err := t.GetPolicyDetails(stub, PolicyId)
-	
-	fmt.Printf("Query Response:%s\n", resAsBytes)
+	PolicyTxsAsBytes, err := stub.GetState(userIndexTxStr)
+	//resAsBytes, err = t.GetPolicyDetails(stub, PolicyId)
+	//readAsBytes,_:=json.Marshal(args)
+	//fmt.Printf("Query Response:%s\n", PolicyTxsAsBytes)
 	
 	if err != nil {
 		return nil, err
 	}
 	
-	return resAsBytes, nil
+	return PolicyTxsAsBytes, nil
 }
 
 func (t *UserChaincode)  GetPolicyDetails(stub shim.ChaincodeStubInterface, User_ID string) ([]byte, error) {
