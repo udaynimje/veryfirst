@@ -62,11 +62,9 @@ func (t *UserChaincode) Invoke(stub shim.ChaincodeStubInterface, function string
 		return t.RegisterPolicy(stub, args)
 	}  else if  function == userTransfer {		
 		return t.TransferPoints(stub, args)
-	} else if function == getTxnDetails {
-        return t.Query(stub,function,args)
-    }
-   jasonAsBytes, _:=json.Marshal(args)
-	return jasonAsBytes, nil
+	} 
+   
+	return nil, nil
 }
 
 func (t *UserChaincode)  TransferPoints(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
